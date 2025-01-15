@@ -87,13 +87,14 @@ date_now = datetime.now()
 date = datetime.now()
 i = 1
 
-while True:
+status = True
+
+while status:
     url = f'https://oto.detik.com/indeks?page={i}'
     logger.info(f"Scraping page: {url}")
     soup = get_soup(url)
     news_contents = soup.find_all('article', class_='list-content__item')
 
-    link_articles = []
     for content in news_contents:
         link = content.find('a')['href']
 
@@ -103,22 +104,19 @@ while True:
         date_delta = date_now - date
         date_delta = date_delta.seconds/60
 
-        print(f"Date: {date}")
-        print(f"Date_now: {date_now}")
-        print(f"Date_delta: {date_delta}")
-
-        if date_delta < 60 :
-            link_articles.append(link)
-
-    for link in link_articles:
-        logger.info(f"Scraping article: {link}")
-        title, author, date, article = get_article(link)
-        if title and article:  # Append only if there's valid content
-            articles.append({'Title': title,
-                            'Author': author,
-                            'Date': date,
-                            'Article': article,
-                            'Link': link})
+        if date_delta < 60.0:
+            logger.info(f"Scraping article: {link}")
+            title, author, date, article = get_article(link)
+            if title and article:  # Append only if there's valid content
+                articles.append({'Title': title,
+                                'Author': author,
+                                'Date': date,
+                                'Article': article,
+                                'Link': link})
+        else:
+            logger.info(f"Scraping stopped")
+            status = False
+            break
     
     time.sleep(3)
     i+=1
