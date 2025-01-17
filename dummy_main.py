@@ -7,7 +7,6 @@ from logger import setup_logger
 from csv_converter import save_articles_to_csv
 from get_soup import get_soup
 from setup_schedule import setup_schedule
-# 2 space after importing module
 
 
 def date_converter(date_raw):
