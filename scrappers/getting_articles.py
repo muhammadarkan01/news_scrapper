@@ -1,21 +1,5 @@
-# Import
-import time 
-from datetime import datetime
-
-# Made module
-from logger import setup_logger
-from csv_converter import save_articles_to_csv
-from get_soup import get_soup
-from setup_schedule import setup_schedule
-
-
-def date_converter(date_raw):
-    """
-        Convert datetime text to datetime object.
-        Add this kind of comment to explain complex function or object
-    """
-    date_string_cleaned = date_raw.split(",")[1].strip().replace("WIB", "").strip()
-    return datetime.strptime(date_string_cleaned, '%d %b %Y %H:%M')
+from converters.date_converter import date_converter
+from scrappers.get_soup import get_soup
 
 def get_article(url:str, logger): 
     # Add type hints, to be explained later at the code quality module
@@ -59,7 +43,7 @@ def get_article(url:str, logger):
         logger.error(f"Error occurred while scraping {url}: {e}")
         return None, None, None, None
 
-def scrape_index_page(url, date_now, logger):
+def scrape_index_page(url:str, date_now, logger):
     articles = []
     try:
         soup = get_soup(url)
@@ -92,28 +76,3 @@ def scrape_index_page(url, date_now, logger):
     except Exception as e:
         logger.error(f"Error occurred while scraping index page {url}: {e}")
         return articles, False
-
-def main(logger):
-    logger = logger
-    articles = []
-    date_now = datetime.now()
-    i = 1
-    status = True
-
-    while status:
-        url = f'https://oto.detik.com/indeks?page={i}'
-        logger.info(f"Scraping page: {url}")
-
-        new_articles, status = scrape_index_page(url, date_now, logger)
-        articles.extend(new_articles)
-
-        time.sleep(3)  
-        i += 1
-
-    # Save articles to CSV
-    save_articles_to_csv(articles, logger=logger)
-
-if __name__ == "__main__":
-    logger = setup_logger()
-    setup_schedule(main, logger)
-
