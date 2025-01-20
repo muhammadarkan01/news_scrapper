@@ -31,6 +31,6 @@ def main(logger):
 
 if __name__ == "__main__":
     logger = setup_logger()
-    setup_schedule(main, logger)
+    main(logger)
 
 
