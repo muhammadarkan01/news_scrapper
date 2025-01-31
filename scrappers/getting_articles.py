@@ -1,5 +1,6 @@
 from converters.date_converter import date_converter
 from scrappers.get_soup import get_soup
+import time
 
 def get_article(url:str, logger): 
     # Add type hints, to be explained later at the code quality module
@@ -43,8 +44,10 @@ def get_article(url:str, logger):
         logger.error(f"Error occurred while scraping {url}: {e}")
         return None, None, None, None
 
-def scrape_index_page(url:str, date_now, logger):
+
+def scrape_index_page(url:str, date_target, logger):
     articles = []
+    
     try:
         soup = get_soup(url)
         news_contents = soup.find_all('article', class_='list-content__item')
@@ -55,10 +58,7 @@ def scrape_index_page(url:str, date_now, logger):
             date_raw = content.find('div', class_='media__date').find('span')['title']
             date = date_converter(date_raw)
 
-            date_delta = date_now - date
-            date_delta_minutes = date_delta.total_seconds() / 60
-
-            if date_delta_minutes < 60.0:
+            if date >= date_target:
                 logger.info(f"Scraping article: {link}")
                 logger.info(f"Article date: {date}")
                 title, author, date, article = get_article(link, logger)
@@ -68,11 +68,13 @@ def scrape_index_page(url:str, date_now, logger):
                                     'Date': date,
                                     'Article': article,
                                     'Link': link})
+                    time.sleep(2)
             else:
                 logger.info(f"Scraping stopped due to date exceeding threshold.")
                 return articles, False
-        
+            
         return articles, True
+
     except Exception as e:
         logger.error(f"Error occurred while scraping index page {url}: {e}")
         return articles, False
