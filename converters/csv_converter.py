@@ -1,6 +1,18 @@
 import pandas as pd
 from pathlib import Path
 
+from langchain.llms import Ollama
+from langchain.prompts import PromptTemplate
+from langchain.chains import LLMChain
+
+def generate_summary(raw_item):
+    ollama_model = Ollama(model="aya") 
+    system_prompt = f"Anda adalah proofreader yang handal di dunia ini.\n\nContext: {raw_item}\n\nBuatkan rangkuman dari seluruh list dengan bahasa yang mudah dipahami dan singkat"
+    prompt_template = PromptTemplate(input_variables=[], template=system_prompt)
+    llm_chain = LLMChain(llm=ollama_model, prompt=prompt_template)
+    response = llm_chain.run({})
+    return response
+
 def save_articles_to_csv(articles, filename="articles.csv", logger=None):
     the_file = Path(filename)
     if the_file.exists():    
