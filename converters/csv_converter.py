@@ -20,7 +20,6 @@ def save_articles_to_csv(articles, filename="articles.csv", logger=None):
     else:    
         try:
             df = pd.DataFrame(articles)
-
             df.to_csv(filename, index=False)
 
             if logger:

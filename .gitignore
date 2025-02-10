@@ -2,5 +2,6 @@
 *.log
 venv
 __pycache__
-ipynb_notes
+*.txt
+open_ai.py
 main_2.py
