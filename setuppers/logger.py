@@ -1,7 +1,7 @@
 import logging
 
 def setup_logger():
-    logger = logging.getLogger("Detik Scrapper Log")
+    logger = logging.getLogger("Scrapper Log")
     logger.setLevel(logging.INFO)
 
     # Console handler
